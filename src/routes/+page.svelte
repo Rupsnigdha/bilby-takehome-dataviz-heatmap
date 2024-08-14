@@ -1,55 +1,31 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
-	export let form;
-
-	let formIsSubmitting = false;
+	import Info from 'lucide-svelte/icons/info';
+	import * as Tooltip from '$lib/shadcn/ui/tooltip';
+	import DateRangeDropdown from '$lib/components/TableControls/DateRangeDropdown.svelte';
+	import Heatmap from '$lib/components/Charts/Heatmap.svelte';
+	
+	let form : HTMLFormElement;
+	export let data;
+	console.log(data);
 </script>
 
-<svelte:head>
-	<title>Home</title>
-</svelte:head>
-
-<main class="flex flex-col items-center justify-center w-screen h-screen bg-gray-50">
-	<div class="flex flex-col gap-4 px-10 py-4 bg-white border rounded-lg">
-		{#if formIsSubmitting}
-			<p>Submitting...</p>
-		{:else if form?.error}
-			<div class="text-red-500 ">
-				<p>{form?.error}</p>
-			</div>
-		{:else if form?.message}
-			<p>{form.message}</p>
-		{/if}
-
-		<form
-			action="/"
-			method="POST"
-			class="flex flex-col gap-4 text-sm"
-			use:enhance={() => {
-				formIsSubmitting = true;
-
-				return async ({ result }) => {
-					formIsSubmitting = false;
-					await applyAction(result);
-				};
-			}}
-		>
-			<input
-				type="name"
-				name="name"
-				placeholder="Enter your name"
-				class="px-4 py-1 border rounded-lg w-80"
-				disabled={formIsSubmitting}
-			/>
-
-			{#if form?.errors?.name}
-				<small class="text-xs text-red-500">{form?.errors?.name[0]}</small>
-			{/if}
-			<button
-				type="submit"
-				disabled={formIsSubmitting}
-				class="px-4 py-2 text-white rounded-lg bg-slate-800">Submit</button
-			>
-		</form>
-	</div>
-</main>
+<div class="h-full flex-1">
+	<header class="container flex justify-between py-4 h-full flex-1">
+		<div class="flex items-center gap-4">
+			<h2 class="text-2xl font-medium">Web Traffics</h2>
+			<Tooltip.Root openDelay={300}>
+				<Tooltip.Trigger><Info class="h-3 w-3 text-muted-foreground" /></Tooltip.Trigger>
+				<Tooltip.Content side="bottom" class="bg-muted">
+					<p>The unique visitors to your site in various date ranges from various countries.</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</div>
+		<div class="hidden items-center gap-4 lg:flex">
+			<DateRangeDropdown />
+		</div>
+		
+	</header>
+	<main>
+		<Heatmap />
+	</main>
+</div>
