@@ -83,6 +83,6 @@
 	</header>
 	<main>
 		<!-- The heatmap component -->
-		<Heatmap data={tableData} loading={loading}/>
+		<Heatmap data={tableData} {loading} />
 	</main>
 </div>

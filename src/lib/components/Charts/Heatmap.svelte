@@ -16,7 +16,6 @@
 
 	$: sortedData = sortData(data);
 
-
 	// HTML components for the graph. gx and gy are the x and y axes.
 	let parentContainer: HTMLDivElement;
 	let gx;
@@ -89,11 +88,10 @@
 			<div class="h-full w-full flex items-center justify-center">
 				<h3 class="text-3xl font-medium">Loading...</h3>
 			</div>
-		{:else}
-		{#if data.length === 0}
-		<div class="h-full w-full flex items-center justify-center">
-			<h3 class="text-3xl font-medium">No data found. Try changing the date range maybe?</h3>
-		</div>
+		{:else if data.length === 0}
+			<div class="h-full w-full flex items-center justify-center">
+				<h3 class="text-3xl font-medium">No data found. Try changing the date range maybe?</h3>
+			</div>
 		{:else}
 			<svg {width} {height} bind:this={svg} class="absolute">
 				<g bind:this={gx} transform={`translate(0,${height - marginBottom})`} />
@@ -135,7 +133,6 @@
 							: (tooltipHour - 12).toString() + ':00 PM'}
 				</p>
 			</div>
-		{/if}
 		{/if}
 	</div>
 </div>
