@@ -1,8 +1,8 @@
-import { helloRouter } from './routers/hello.router';
+import { uniqueVisitorsRouter } from './routers/visitors.router';
 import { createTRPCRouter } from './trpcContext';
 
 export const appRouter = createTRPCRouter({
-	hello: helloRouter
+	uniqueVisitors: uniqueVisitorsRouter
 });
 
 export type AppRouter = typeof appRouter;
