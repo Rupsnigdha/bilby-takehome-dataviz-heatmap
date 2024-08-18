@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private';
 import { elasticClient } from '$server/elastic';
 import { parseUniqueVisitorsResponse } from '$server/utils/parseUniqueVisitorsResponse';
 import { type UniqueVisitorsParams } from '$server/validations/visitors.schema';
+
 export class VisitorsService {
 	async getUniqueVisitors(params: UniqueVisitorsParams) {
 		const res = await elasticClient.search({
@@ -45,7 +46,8 @@ export class VisitorsService {
 				}
 			}
 		});
+		console.log(res);
 		const parsedRes = parseUniqueVisitorsResponse(res);
-		return parsedRes;
+		return { res: parsedRes };
 	}
 }

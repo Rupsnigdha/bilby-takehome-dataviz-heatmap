@@ -16,8 +16,7 @@
 	const localTimeZone = getLocalTimeZone();
 
 	let tableData: UniqueVisitorsResponse[] = [];
-	$: loading = false;
-
+	$: loading = true;
 	/**
 	 * updates the value of tableData based on the value of $dateRangeStore.
 	 */
@@ -47,11 +46,11 @@
 
 		try {
 			loading = true;
-			let res = await trpc.uniqueVisitors.getUniqueVisitorsByCountry.query({
+			let data = await trpc.uniqueVisitors.getUniqueVisitorsByCountry.query({
 				initialDate: initialDateString,
 				finalDate: finalDateString
 			});
-			tableData = res;
+			tableData = data.res;
 		} catch (error) {
 			console.error('Error fetching heatmap data:', error);
 		} finally {

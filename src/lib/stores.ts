@@ -1,4 +1,5 @@
-import { writable } from 'svelte/store';
+import { persisted } from 'svelte-persisted-store';
 import type { DateRange } from './config';
 
-export const dateRangeStore = writable<DateRange['value']>('LAST_YEAR');
+export const dateRangeStore = persisted<DateRange['value']>('dateRange', 'LAST_WEEK');
+export const selectedHeatmapColorTheme = persisted('color', '#800020');

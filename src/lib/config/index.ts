@@ -1,3 +1,3 @@
 import { type DateRange, dateRanges } from './dateRanges';
-
-export { dateRanges, type DateRange };
+import { colors } from './colors';
+export { dateRanges, colors, type DateRange };

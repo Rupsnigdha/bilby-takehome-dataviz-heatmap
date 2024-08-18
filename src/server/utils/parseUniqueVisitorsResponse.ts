@@ -1,8 +1,9 @@
 import type { UniqueVisitorsResponse } from '$server/validations/visitors.schema';
+import type { SearchResponse } from '@elastic/elasticsearch/lib/api/types';
 
-export const parseUniqueVisitorsResponse = (response) => {
+export const parseUniqueVisitorsResponse = (response: SearchResponse) => {
 	const formatted: UniqueVisitorsResponse[] = [];
-	const countries = response.aggregations.countries.buckets;
+	const countries = response.aggregations?.countries.buckets;
 	countries.forEach((country) => {
 		const countryCode = country.key;
 		const hours = country.hours.buckets;

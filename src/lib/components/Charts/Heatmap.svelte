@@ -1,14 +1,19 @@
 <script lang="ts">
 	export let data: UniqueVisitorsResponse[] = [];
 	export let loading = false;
-
+	console.log(data.length);
 	import { scaleLinear, scalePoint } from 'd3-scale';
 	import { axisBottom, axisLeft } from 'd3-axis';
 	import { select } from 'd3-selection';
 	import { max } from 'd3-array';
 	import type { UniqueVisitorsResponse } from '$server/validations/visitors.schema';
 	import { onMount } from 'svelte';
-	import { mode } from 'mode-watcher';
+
+	import { colors } from '$lib/config/';
+
+	import Button from '$lib/shadcn/ui/button/button.svelte';
+	import { selectedHeatmapColorTheme } from '$lib/stores';
+	import Check from 'lucide-svelte/icons/check';
 
 	const sortData = (data: UniqueVisitorsResponse[]) => {
 		return data.sort((a, b) => a.hour - b.hour);
@@ -52,14 +57,17 @@
 		.domain(sortedData.map((d) => d.countryCode))
 		.range([height - marginBottom, marginTop])
 		.padding(0.5);
-
 	// a d3 scale for the color scheme of the heatmap. maps the number of visitors to a color.
 	$: colorScale = scaleLinear()
-		.domain([-1, max(sortedData, (d) => d.visitors)])
-		.range(['#FFFFFF00', '#800020FF']);
-	$: select(gx).call(axisBottom(xAxis));
+		.domain([0, max(sortedData, (d) => d.visitors)])
+		.range(['#FFFFFF00', $selectedHeatmapColorTheme]);
+
+	$: select(gx).call(axisBottom(xAxis).tickFormat((d) => (d % 3 === 0 ? d + ':00' : '')));
 	$: select(gy).call(axisLeft(yAxis));
 
+	// color scale for the legend of the heatmap
+	const legendData = [0, 1, 2, 3, 4, 5];
+	$: legendScale = scaleLinear().domain([0, 5]).range(['#FFFFFF00', $selectedHeatmapColorTheme]);
 	/**
 	 * Handles the mouseover events for the data points.
 	 *
@@ -70,9 +78,7 @@
 		tooltipCountry = d.countryCode;
 		tooltipHour = d.hour;
 		tooltipVisitors = d.visitors;
-		// @ts-ignore
 		tooltip.style.left = xAxis(d.hour.toString()).toString() + 'px';
-		// @ts-ignore
 		tooltip.style.top = yAxis(d.countryCode).toString() + 'px';
 		tooltip.style.opacity = '1';
 	};
@@ -80,9 +86,30 @@
 	const handleMouseLeaveDatapoint = () => {
 		tooltip.style.opacity = '0';
 	};
+
+	const handleColorPaletteChange = (color: string) => {
+		$selectedHeatmapColorTheme = color;
+	};
 </script>
 
-<div class="container">
+<div class="container pt-8">
+	<div class="flex justify-between">
+		<h2>Unique Visitors Heatmap</h2>
+		<div class="flex gap-4">
+			<div class="text-sm">Least</div>
+			{#each legendData as legend}
+				<div
+					style="width: {(Math.min(10, width / 72) * 2).toString()}px; height: {(
+						Math.min(10, width / 72) * 2
+					).toString()}px; background-color: {legendScale(
+						legend
+					)}; border-color: {$selectedHeatmapColorTheme}"
+					class="rounded-full border"
+				/>
+			{/each}
+			<div class="text-sm">Most</div>
+		</div>
+	</div>
 	<div class="w-full h-[400px] relative" bind:this={parentContainer}>
 		{#if loading}
 			<div class="h-full w-full flex items-center justify-center">
@@ -102,7 +129,7 @@
 						cy={yAxis(d.countryCode)}
 						r={Math.min(10, width / 72).toString()}
 						fill={colorScale(d.visitors).toString()}
-						stroke={$mode === 'dark' ? '#BB002033' : '#80002033'}
+						stroke={$selectedHeatmapColorTheme}
 						class="hover:z-20 cursor-help"
 						role="button"
 						tabindex={i}
@@ -134,5 +161,24 @@
 				</p>
 			</div>
 		{/if}
+	</div>
+	<div class="flex justify-end mt-4">
+		<div class="flex gap-4 items-center">
+			<p>Select color palette</p>
+			{#each colors as color}
+				<Button
+					variant="outline"
+					class="w-10 h-10 p-0 rounded-full transition-all"
+					style="background-color: {color.code};"
+					on:click={() => {
+						handleColorPaletteChange(color.code);
+					}}
+				>
+					<Check
+						class="h-4 w-4 text-white {$selectedHeatmapColorTheme === color.code ? '' : 'hidden'}"
+					/>
+				</Button>
+			{/each}
+		</div>
 	</div>
 </div>
