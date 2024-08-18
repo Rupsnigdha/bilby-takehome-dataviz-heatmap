@@ -1,7 +1,6 @@
 <script lang="ts">
 	export let data: UniqueVisitorsResponse[] = [];
 	export let loading = false;
-	console.log(data.length);
 	import { scaleLinear, scalePoint } from 'd3-scale';
 	import { axisBottom, axisLeft } from 'd3-axis';
 	import { select } from 'd3-selection';
@@ -93,9 +92,9 @@
 </script>
 
 <div class="container pt-8">
-	<div class="flex justify-between">
-		<h2>Unique Visitors Heatmap</h2>
-		<div class="flex gap-4">
+	<div class="flex justify-end lg:justify-between">
+		<h2 class="hidden lg:block">Unique Visitors Heatmap</h2>
+		<div class="flex gap-4 items-center">
 			<div class="text-sm">Least</div>
 			{#each legendData as legend}
 				<div
@@ -130,7 +129,7 @@
 						r={Math.min(10, width / 72).toString()}
 						fill={colorScale(d.visitors).toString()}
 						stroke={$selectedHeatmapColorTheme}
-						class="hover:z-20 cursor-help"
+						class="cursor-help focus:outline-1 focus:ring-0"
 						role="button"
 						tabindex={i}
 						on:mouseover={() => {

@@ -12,6 +12,7 @@
 
 	import { dateRangeStore } from '$lib/stores';
 	import type { UniqueVisitorsResponse } from '$server/validations/visitors.schema';
+	import MobileControls from '$lib/components/MobileControls.svelte';
 
 	const localTimeZone = getLocalTimeZone();
 
@@ -78,7 +79,10 @@
 			</Tooltip.Root>
 		</div>
 		<!-- Dropdown to update the date range store -->
-		<DateRangeDropdown />
+		 <div class="hidden lg:flex">
+			 <DateRangeDropdown />
+		 </div>
+		 <MobileControls />
 	</header>
 	<main>
 		<!-- The heatmap component -->

@@ -46,7 +46,6 @@ export class VisitorsService {
 				}
 			}
 		});
-		console.log(res);
 		const parsedRes = parseUniqueVisitorsResponse(res);
 		return { res: parsedRes };
 	}
